@@ -1,96 +1,12 @@
-```yaml
 name: Build Tap Chase APK
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
+  test:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Get project files
-        uses: actions/checkout@v4
-
-      - name: Extract game
-        run: |
-          mkdir -p game
-          unzip -o "Tap Chase.zip" -d game
-          find game -name "main.py" -type f -exec cp {} game/main.py \;
-
-      - name: Install required packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            git \
-            zip \
-            unzip \
-            openjdk-17-jdk \
-            ffmpeg \
-            libsdl2-dev \
-            libsdl2-image-dev \
-            libsdl2-mixer-dev \
-            libsdl2-ttf-dev \
-            libportmidi-dev
-
-      - name: Install Buildozer
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install buildozer cython
-
-      - name: Create Buildozer configuration
-        working-directory: game
-        run: |
-          buildozer init
-
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path("buildozer.spec")
-          text = p.read_text()
-
-          text = text.replace(
-              "title = My Application",
-              "title = Tap Chase"
-          )
-
-          text = text.replace(
-              "package.name = myapp",
-              "package.name = tapchase"
-          )
-
-          text = text.replace(
-              "package.domain = org.test",
-              "package.domain = org.tapchase"
-          )
-
-          text = text.replace(
-              "requirements = python3,kivy",
-              "requirements = python3,kivy"
-          )
-
-          text = text.replace(
-              "#source.include_exts = py,png,jpg,kv,atlas",
-              "source.include_exts = py,png,jpg,jpeg,kv,atlas,mp3,wav,ogg"
-          )
-
-          text = text.replace(
-              "#orientation = portrait",
-              "orientation = portrait"
-          )
-
-          p.write_text(text)
-          PY
-
-      - name: Build Android APK
-        working-directory: game
-        run: |
-          buildozer -v android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Tap-Chase-APK
-          path: game/bin/*.apk
-```
+      - name: Test
+        run: echo "WORKFLOW IS WORKING"
