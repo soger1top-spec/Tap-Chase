@@ -1,12 +1,29 @@
+```yaml
 name: Build Tap Chase
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Test
-        run: echo "BUILD STARTED"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show repository files
+        run: |
+          echo "=== Repository ==="
+          ls -la
+          echo "=== ZIP files ==="
+          find . -maxdepth 2 -type f -iname "*.zip"
+
+      - name: Test workflow
+        run: |
+          echo "BUILD STARTED"
+          echo "GitHub Actions is working."
+```
