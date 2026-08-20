@@ -1,51 +1,12 @@
-```yaml
-name: Build Tap Chase
+name: Test
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
+  test:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Extract project
-        run: |
-          unzip -o "Tap Chase.zip" -d project
-
-      - name: Find project folder
-        run: |
-          find project -type f -name "main.py"
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            git \
-            zip \
-            unzip \
-            openjdk-17-jdk \
-            python3-pip \
-            python3-venv
-
-      - name: Install Buildozer
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install buildozer cython==0.29.37
-
-      - name: Build APK
-        run: |
-          PROJECT_DIR=$(dirname "$(find project -type f -name 'main.py' | head -n 1)")
-          cd "$PROJECT_DIR"
-          buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Tap-Chase-APK
-          path: "**/bin/*.apk"
-```
+      - name: Hello
+        run: echo "WORKFLOW WORKS"
