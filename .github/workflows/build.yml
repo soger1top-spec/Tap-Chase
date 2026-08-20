@@ -1,12 +1,12 @@
-name: Test
+name: Build Tap Chase
 
 on:
   workflow_dispatch:
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Hello
-        run: echo "WORKFLOW WORKS"
+      - name: Test
+        run: echo "BUILD STARTED"
