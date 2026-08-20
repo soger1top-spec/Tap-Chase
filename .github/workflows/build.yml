@@ -1,3 +1,4 @@
+```yaml
 name: Build Tap Chase APK
 
 on:
@@ -8,15 +9,16 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Download project
+      - name: Get project files
         uses: actions/checkout@v4
 
-      - name: Extract Tap Chase
+      - name: Extract game
         run: |
-          unzip -o "Tap Chase.zip" -d project
-          find project -type f -name "main.py" -exec cp {} project/main.py \;
+          mkdir -p game
+          unzip -o "Tap Chase.zip" -d game
+          find game -name "main.py" -type f -exec cp {} game/main.py \;
 
-      - name: Install system packages
+      - name: Install required packages
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -24,6 +26,7 @@ jobs:
             git \
             zip \
             unzip \
+            openjdk-17-jdk \
             ffmpeg \
             libsdl2-dev \
             libsdl2-image-dev \
@@ -31,13 +34,13 @@ jobs:
             libsdl2-ttf-dev \
             libportmidi-dev
 
-      - name: Install Python tools
+      - name: Install Buildozer
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install buildozer cython
 
-      - name: Create buildozer.spec
-        working-directory: project
+      - name: Create Buildozer configuration
+        working-directory: game
         run: |
           buildozer init
 
@@ -47,28 +50,47 @@ jobs:
           p = Path("buildozer.spec")
           text = p.read_text()
 
-          replacements = {
-              "title = My Application": "title = Tap Chase",
-              "package.name = myapp": "package.name = tapchase",
-              "package.domain = org.test": "package.domain = org.tapchase",
-              "source.include_exts = py,png,jpg,kv,atlas": "source.include_exts = py,png,jpg,jpeg,kv,atlas,mp3,wav,ogg,json,ttf",
-              "requirements = python3,kivy": "requirements = python3,kivy",
-              "orientation = portrait": "orientation = portrait",
-          }
+          text = text.replace(
+              "title = My Application",
+              "title = Tap Chase"
+          )
 
-          for old, new in replacements.items():
-              text = text.replace(old, new)
+          text = text.replace(
+              "package.name = myapp",
+              "package.name = tapchase"
+          )
+
+          text = text.replace(
+              "package.domain = org.test",
+              "package.domain = org.tapchase"
+          )
+
+          text = text.replace(
+              "requirements = python3,kivy",
+              "requirements = python3,kivy"
+          )
+
+          text = text.replace(
+              "#source.include_exts = py,png,jpg,kv,atlas",
+              "source.include_exts = py,png,jpg,jpeg,kv,atlas,mp3,wav,ogg"
+          )
+
+          text = text.replace(
+              "#orientation = portrait",
+              "orientation = portrait"
+          )
 
           p.write_text(text)
           PY
 
-      - name: Build APK
-        working-directory: project
+      - name: Build Android APK
+        working-directory: game
         run: |
-          buildozer android debug
+          buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: tap-chase-apk
-          path: project/bin/*.apk
+          name: Tap-Chase-APK
+          path: game/bin/*.apk
+```
